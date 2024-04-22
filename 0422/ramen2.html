@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インスタントラーメン</title>
+</head>
+
+<body>
+    <p id="result"></p>
+
+    <script>
+        const demaeicchou = {
+            name: "出前一丁",
+            soup: "醤油",
+            preview: function () {
+                const area = document.querySelector("#result");
+                area.innerHTML = `${this.name}は、${this.soup}ラーメンです。`;//テンプレートリテラル
+            },
+        };
+        demaeicchou.preview();
+
+        demaeicchou.soup = "とんこつ";
+
+        demaeicchou.preview = function () {
+            const area = document.querySelector("#result");
+            area.innerHTML = `${this.name}は、${this.soup}ラーメンではありません。`;
+        };
+        //出前一丁を消す
+        delete demaeicchou.name;
+        //メッソドの再実行
+        demaeicchou.preview();
+
+
+
+
+        class InstantNoodle {
+            static TYPE = "インスタントラーメン";
+            static making() {
+                return `<p>${InstantNoodle.TYPE}は、鍋で作ります。</p>`;
+            }
+            constructor(ramen, taste) {
+                this.name = ramen;
+                this.soup = taste;
+            }
+        }
+
+
+        document.body.insertAdjacentHTML('beforeend', InstantNoodle.making());
+        console.log(InstantNoodle.TYPE);
+
+        /*
+                //インスタンス化
+                const soltRamen = new InstantNoodle("サッポロ一番塩", "塩");
+                console.log(soltRamen.name + "は、" + soltRamen.soup + "味");
+
+                const demaeicchouN = new InstantNoodle("出前一丁", "醤油");
+                console.log(demaeicchouN);
+                console.log(demaeicchouN.name + "は、" + demaeicchouN.soup + "味");
+
+                //メッソドを使って呼び出す
+                console.log(soltRamen.descript(), demaeicchouN.descript());
+
+                document.body.insertAdjacentHTML("beforeend", soltRamen.descript());
+                document.body.insertAdjacentHTML("beforeend", demaeicchouN.descript());
+
+                const ramens = [];
+                ramens.push(new InstantNoodle("サッポロ一番塩", "塩"));
+                ramens.push(new InstantNoodle("出前一丁", "醤油"));
+                ramens.push(new InstantNoodle("うまかっちゃん", "とんこつ"));
+                console.log((ramens));
+
+
+
+                //ramenの中にramensの要素（値)が入る。
+                ramens.forEach((ramen) => {
+                    //lengthを書かなくても、要素の数だけ回る。
+                    document.body.insertAdjacentHTML("beforeend", ramen.descript());
+                });*/
+
+
+
+        //サブクラス *InstantNoodleを継承したMakerクラス
+        class Maker extends InstantNoodle {
+            //引数3つ
+            constructor(ramen, taste, company) {
+                //super classから引き継ぎ
+                super(ramen, taste);
+                this.maker = company;
+            }
+            //同じメソッド名で、上書き（オーバーライド）
+            descript() {
+                return `<p>${this.name} 「${this.soup}」のメーカーは、${this.maker}です。</p>`;
+            }
+        }
+
+
+        //サブクラスのインスタンス化
+        const maker = new Maker("マルちゃん正麺", "しょうゆ", "東洋水産");
+        //サブクラスのメソッド
+        document.body.insertAdjacentHTML("beforeend", maker.makerDescript());
+
+        //スーパークラスのメソッドも利用できる
+        document.body.insertAdjacentHTML("beforeend", maker.descript());
+
+        ramens.forEach((ramen) => {
+            //スーパークラスは変わらず
+            document.body.insertAdjacentHTML("beforeend", ramen.descript());
+        });
+        const maker2 = new Maker("マルちゃん正麺", "しょうゆ", "東洋水産");
+        //サブクラスはオーバーライドされる
+        document.body.insertAdjacentHTML("beforeend", maker2.descript());
+
+        console.dir(document.body);
+
+
+    </script>
+
+</body>
+
+</html>
