@@ -35,17 +35,16 @@
         const weekUrl = `https://www.jma.go.jp/bosai/forecast/data/forecast/${codeNums[0]["愛知県"]}.json`;
 
         fetch(weekUrl)
-            .then((response) => {
+            .then(function (response) {
                 if (response.status !== 200) {
-                    console.log("問題がありました。Status Code:" + response.status);
+                    console.log("問題がありました。ステータスコード:" + response.status);
                     return;
                 }
-                response.json().then((data) => {
-                    console.log(data);
-                });
-            })
-            .catch((err) => {
-                console.log("Fetch Error:", err);
+                //愛知県西部の天気予報をwest、日付をweatherDateに代入します。
+                const west = data[1].timeSeries[1].areas[1];
+                const weatherDate = data[1].timeSeries[1].timeDefines;
+
+                console.log(west, weatherDate);
             });
     </script>
 

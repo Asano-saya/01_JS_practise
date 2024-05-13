@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
@@ -10,8 +10,121 @@
 </head>
 
 <body>
+    <header>
+        <h1>天気予報</h1>
+    </header>
+    <main class="main">
+        <div class="left">
+            <div class="date">
+                <h2 class="day"></h2>
+            </div>
+            <div class="main">
+                <visual><img class="wether_pic" src="" alt=""></visual>
+                <div class="temperature">
+                    <p class="min"></p>
+                    <p class="max"></p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="rain">
+
+                </div>
+                <div class="movie">
+
+                </div>
+            </div>
+    </main>
+    <script src="./wethercodes.js"></script>
     <script>
-        //231126　南区コード
+
+        const codeNums = [{ 愛知県: 230000 }, { 岐阜県: 210000 }, { 三重県: 240000 }, { 静岡県: 220000 }];
+        //console.log(codeNums);
+
+
+        const weekUrl = `https://www.jma.go.jp/bosai/forecast/data/forecast/${codeNums[0]["愛知県"]}.json`;
+        console.log(weekUrl);
+
+
+        //日付の取得
+        fetch(weekUrl)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    console.log("問題がありました。ステータスコード:" + response.status);
+                    return;
+                }
+                response.json().then(function (data) {
+                    console.log(data);
+
+                    //wetherに天気予報、wetherDateに日付を代入
+                    const west = data[0].timeSeries[0].areas[0];
+                    const weatherDate = data[0].timeSeries[0].timeDefines;
+                    console.log(west, weatherDate);
+
+                    //要素取得
+                    const date = document.querySelector(".date");
+                    const day = document.querySelector(".day");
+
+                    //dayに日付を入れる
+                    day.innerHTML = `${new Date(weatherDate[0]).getMonth() + 1}月${new Date(weatherDate[0]).getDate()}日`;
+
+                    //dateにdayを入れる
+                    date.appendChild(day);
+
+
+                });
+            });
+        //codeを使った取得
+        fetch(weekUrl)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    console.log("問題がありました。ステータスコード:" + response.status);
+                    return;
+                }
+                response.json().then(function (data) {
+                    const code = data[0].timeSeries[0].areas[0].weatherCodes;
+
+
+                    const visual = document.querySelector(".main_visual");
+                    const pic = document.querySelector(".wether_pic");
+                    console.log(pic);
+
+                    //天気コード内のconst weathercodes内のコードを活用
+                    console.log(weathercode[code[0]][0]);
+                    const weathericon = weathercode[code[0]][0];
+                    pic.src = `https://www.jma.go.jp/bosai/forecast/img/${weathericon}`;
+
+                    visual.appendChild(pic);
+                });
+            })
+            .catch(function (err) {
+                console.log("Fetchエラー:", err);
+            });
+
+
+
+
+        //最低気温
+        fetch(weekUrl)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    console.log("問題がありました。ステータスコード:" + response.status);
+                    return;
+                }
+                response.json().then(function (data) {
+                    console.log(data);
+
+
+
+                });
+            });
+
+
+
+
+
+
+
+
     </script>
 
 </body>
