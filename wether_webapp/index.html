@@ -6,33 +6,42 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webアプリ</title>
+    <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
+    <link rel="stylesheet" href="./css/style.css">
 
 </head>
 
 <body>
-    <header>
-        <h1>天気予報</h1>
+    <header class="header">
+        <div class="header__inner">
+            <h1 class="header__title">天気予報</h1>
+        </div>
     </header>
     <main class="main">
-        <div class="left">
-            <div class="date">
-                <h2 class="day"></h2>
-            </div>
-            <div class="main">
-                <visual><img class="wether_pic" src="" alt=""></visual>
-                <div class="temperature">
-                    <p class="min"></p>
-                    <p class="max"></p>
+        <div class="main__inner">
+            <div class="main__left">
+                <div class="date">
+                    <h2 class="date__day"></h2>
+                </div>
+                <div class="wether">
+                    <visual><img class="wether__pic" src="" alt=""></visual>
+                    <div class="wether__temperature">
+                        <p class="wether__min"></p>
+                        <p class="wether__max"></p>
+                    </div>
                 </div>
             </div>
             <div class="right">
                 <div class="rain">
-
+                    <div class="title"></div>
+                    <div class="precipitation">
+                        <table></table>
+                    </div>
                 </div>
                 <div class="movie">
-
                 </div>
             </div>
+        </div>
     </main>
     <script src="./wethercodes.js"></script>
     <script>
@@ -62,7 +71,7 @@
 
                     //要素取得
                     const date = document.querySelector(".date");
-                    const day = document.querySelector(".day");
+                    const day = document.querySelector(".date__day");
 
                     //dayに日付を入れる
                     day.innerHTML = `${new Date(weatherDate[0]).getMonth() + 1}月${new Date(weatherDate[0]).getDate()}日`;
@@ -83,9 +92,7 @@
                 response.json().then(function (data) {
                     const code = data[0].timeSeries[0].areas[0].weatherCodes;
 
-
-                    const visual = document.querySelector(".main_visual");
-                    const pic = document.querySelector(".wether_pic");
+                    const pic = document.querySelector(".wether__pic");
                     console.log(pic);
 
                     //天気コード内のconst weathercodes内のコードを活用
@@ -93,7 +100,7 @@
                     const weathericon = weathercode[code[0]][0];
                     pic.src = `https://www.jma.go.jp/bosai/forecast/img/${weathericon}`;
 
-                    visual.appendChild(pic);
+
                 });
             })
             .catch(function (err) {
@@ -112,8 +119,90 @@
                 }
                 response.json().then(function (data) {
                     console.log(data);
+
+                    const min = document.querySelector(".wether__min");
+                    console.log(min);
+
+                    min.innerHTML = data[1].tempAverage.areas[0].min;
+
+
+                });
+
+            });
+        //最高気温
+        fetch(weekUrl)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    console.log("問題がありました。ステータスコード:" + response.status);
+                    return;
+                }
+                response.json().then(function (data) {
+                    console.log(data);
+
+                    const max = document.querySelector(".wether__max");
+                    console.log(max);
+
+                    max.innerHTML = data[1].tempAverage.areas[0].max;
+
+
+                });
+
+            });
+
+
+
+        //降水率
+        fetch(weekUrl)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    console.log("問題がありました。ステータスコード:" + response.status);
+                    return;
+                }
+                response.json().then(function (data) {
+                    console.log(data);
+
+                    //"降水率"を表示
+                    const aria = document.querySelector(".title");
+                    const h2Elm = document.createElement("h2");
+                    h2Elm.innerHTML = '降水率';
+                    aria.appendChild(h2Elm);
+
+                    //table
+                    const precipTable = document.querySelector(".precipitation table");
+                    console.log(precipTable);
+
+                    //時間取得
+                    const times = data[0].timeSeries[1].timeDefines;
+                    console.log(times);
+                    //降水率取得
+                    const pops = data[0].timeSeries[1].areas[1].pops;
+                    console.log(pops);
+
+                    //時間表示
+                    const trElm = document.createElement("tr");
+                    for (const time of times) {
+                        const data = new Date(time);
+                        const thElm = document.createElement("th");
+                        thElm.innerHTML = `${data.getHours()}時${data.getMinutes().toString().padStart(2, "0")}分`;
+                        trElm.appendChild(thElm);
+                        precipTable.appendChild(trElm);
+
+                    }
+
+                    //降水率表示
+                    const trElm1 = document.createElement("tr");
+                    for (const percent of pops) {
+                        const thElm = document.createElement("th");
+                        thElm.innerHTML = `${percent}%`;
+                        trElm1.appendChild(thElm);
+                        precipTable.appendChild(trElm1);
+                    }
                 });
             });
+
+
+
+
 
 
 
